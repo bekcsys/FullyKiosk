@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Wellness USA</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  height:100%;
+  width:100%;
+  font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;
+  background:#d0d3d5;
+  color:#064f72;
+  overflow:hidden;
+}
+
+body{
+  display:flex;
+  flex-direction:column;
+}
+
+.scene{
+  flex:1;
+  width:100%;
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  min-height:0;
+}
+
+.split-layout{
+  display:grid;
+  grid-template-columns:1fr 2fr;
+  grid-template-rows:auto auto;
+  align-content:end;
+  align-items:start;
+  width:100%;
+  height:100%;
+  padding-bottom:10px;
+}
+
+.left-half,
+.right-half{
+  display:contents;
+}
+
+.left-brand{
+  display:contents;
+}
+
+.wusa-logo{
+  grid-column:1;
+  grid-row:1;
+  justify-self:center;
+}
+
+.reconnect-row{
+  grid-column:1;
+  grid-row:2;
+  justify-self:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin-top:calc(1.5rem - 70px);
+  width:min(92%,240px);
+}
+
+.ip-label{
+  font-size:14px;
+  font-weight:700;
+  color:#064f72;
+  align-self:flex-start;
+}
+
+.ip-input{
+  width:100%;
+  border:1px solid rgba(6,79,114,0.25);
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:18px;
+  color:#064f72;
+  background:rgba(255,255,255,0.65);
+  outline:none;
+}
+
+.ip-input:focus{
+  border-color:#064f72;
+  box-shadow:0 0 0 2px rgba(6,79,114,0.15);
+}
+
+.ip-input.invalid{
+  border-color:#ce193c;
+}
+
+.ip-error{
+  width:100%;
+  font-size:13px;
+  color:#ce193c;
+  min-height:18px;
+  text-align:left;
+}
+
+.guide{
+  grid-column:2;
+  grid-row:1;
+  width:100%;
+  max-width:520px;
+  padding:0 2.5rem 0 1.5rem;
+  margin-bottom:0;
+}
+
+.wusa-logo img{
+  width:min(42vw,260px);
+  height:auto;
+  display:block;
+  object-fit:contain;
+}
+
+h1{
+  font-size:32px;
+  font-weight:700;
+  letter-spacing:-0.5px;
+  color:#064f72;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  font-size:18px;
+  line-height:1.4;
+  color:#064f72;
+  opacity:0.85;
+  margin-bottom:18px;
+  padding-bottom:16px;
+  border-bottom:1px solid rgba(6,79,114,0.2);
+}
+
+.guide-title{
+  font-size:21px;
+  font-weight:700;
+  color:#064f72;
+  margin-bottom:12px;
+}
+
+.step{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin:11px 0;
+  font-size:17px;
+  line-height:1.4;
+  color:#064f72;
+}
+
+.step:last-child{
+  margin-bottom:0;
+}
+
+.step-label{
+  font-weight:700;
+}
+
+.num{
+  flex-shrink:0;
+  min-width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#ce193c;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+}
+
+button{
+  border:none;
+  outline:none;
+  border-radius:999px;
+  min-width:220px;
+  width:100%;
+  padding:15px 52px;
+  font-size:20px;
+  font-weight:700;
+  background:#ce193c;
+  color:#fff;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(206,25,60,0.35);
+  transition:background 0.2s ease,box-shadow 0.2s ease;
+}
+
+button.reconnecting{
+  background:#064f72;
+  box-shadow:0 6px 16px rgba(6,79,114,0.35);
+  cursor:default;
+}
+
+button:disabled{
+  cursor:default;
+}
+
+button:active:not(:disabled){
+  transform:scale(0.97);
+}
+
+.loader{
+  width:28px;
+  height:28px;
+  border:3px solid rgba(6,79,114,0.2);
+  border-top-color:#ce193c;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity 0.2s ease;
+}
+
+.loader.visible{
+  opacity:1;
+  visibility:visible;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+
+.footer{
+  flex-shrink:0;
+  width:100%;
+  padding:14px 2rem 20px;
+  text-align:center;
+  font-size:14px;
+  color:#064f72;
+  opacity:0.65;
+  letter-spacing:0.2px;
+}
+
+.footer::before{
+  content:"";
+  display:block;
+  width:80%;
+  height:1px;
+  margin:0 auto 12px;
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6,79,114,0.12) 15%,
+    rgba(6,79,114,0.45) 50%,
+    rgba(6,79,114,0.12) 85%,
+    transparent 100%
+  );
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+  <div class="split-layout">
+
+    <div class="left-half">
+      <div class="left-brand">
+        <div class="wusa-logo">
+          <img src="WUSA_logo_color.png" alt="Wellness USA">
+        </div>
+
+        <div class="reconnect-row">
+          <label class="ip-label" for="podIp">Pod IP address</label>
+          <input type="text" id="podIp" class="ip-input" inputmode="decimal" placeholder="e.g. 10.10.52.181" autocomplete="off" spellcheck="false">
+          <div class="ip-error" id="ipError" aria-live="polite"></div>
+          <button id="reconnectBtn" onclick="retryNow()">Reconnect</button>
+          <div class="loader" id="loader" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-half">
+      <div class="guide">
+        <h1>Unable to Connect</h1>
+        <p class="subtitle">The display cannot connect to the pod controller.</p>
+
+        <div class="guide-title">Please make sure:</div>
+
+        <div class="step">
+          <div class="num">1</div>
+          <div><span class="step-label">Power</span> &mdash; Pod is plugged in, Wi-Fi router plugged in.</div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div><span class="step-label">Reboot</span> &mdash; Switch off Pod On/Off switch and switch back on.</div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div><span class="step-label">Connect</span> &mdash; Enter IP address and re-connect.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer">Wellness USA - Premium Wellness Pod &copy; <span id="year"></span></footer>
+
+<script>
+const IP_STORAGE_KEY = "wusa_pod3_ip";
+const reconnectTimeoutMs = 3500;
+
+let reconnecting = false;
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function normalizeIp(value) {
+    return value.trim();
+}
+
+function isValidIp(ip) {
+    return /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/.test(ip);
+}
+
+function buildPodUrl(ip) {
+    return "http://" + ip + ":8080/webvisu.htm";
+}
+
+function getSavedIp() {
+    return localStorage.getItem(IP_STORAGE_KEY) || "";
+}
+
+function saveIp(ip) {
+    localStorage.setItem(IP_STORAGE_KEY, ip);
+}
+
+function showIpError(message) {
+    document.getElementById("ipError").textContent = message;
+    document.getElementById("podIp").classList.add("invalid");
+}
+
+function clearIpError() {
+    document.getElementById("ipError").textContent = "";
+    document.getElementById("podIp").classList.remove("invalid");
+}
+
+function resetReconnectUi(btn, loader, ipInput) {
+    reconnecting = false;
+    btn.disabled = false;
+    btn.textContent = "Reconnect";
+    btn.classList.remove("reconnecting");
+    loader.classList.remove("visible");
+    loader.setAttribute("aria-hidden", "true");
+    ipInput.disabled = false;
+}
+
+const savedIp = getSavedIp();
+if (savedIp) {
+    document.getElementById("podIp").value = savedIp;
+}
+
+document.getElementById("podIp").addEventListener("input", clearIpError);
+
+function retryNow() {
+    if (reconnecting) return;
+
+    const btn = document.getElementById("reconnectBtn");
+    const loader = document.getElementById("loader");
+    const ipInput = document.getElementById("podIp");
+    const ip = normalizeIp(ipInput.value);
+
+    clearIpError();
+
+    if (!ip) {
+        showIpError("Enter the pod IP address.");
+        ipInput.focus();
+        return;
+    }
+
+    if (!isValidIp(ip)) {
+        showIpError("Enter a valid IP address.");
+        ipInput.focus();
+        return;
+    }
+
+    saveIp(ip);
+    reconnecting = true;
+
+    const targetUrl = buildPodUrl(ip);
+    let resolved = false;
+
+    btn.disabled = true;
+    ipInput.disabled = true;
+    btn.textContent = "Reconnecting ...";
+    btn.classList.add("reconnecting");
+    loader.classList.add("visible");
+    loader.setAttribute("aria-hidden", "false");
+
+    function goToPod() {
+        if (resolved) return;
+        resolved = true;
+        window.location.replace(targetUrl);
+    }
+
+    function stayOnErrorPage() {
+        if (resolved) return;
+        resolved = true;
+        resetReconnectUi(btn, loader, ipInput);
+        showIpError("Could not reach pod. Check IP and try again.");
+    }
+
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.tabIndex = -1;
+    iframe.style.cssText = "position:absolute;width:0;height:0;border:0;opacity:0;pointer-events:none";
+    iframe.src = targetUrl;
+    iframe.onload = goToPod;
+    document.body.appendChild(iframe);
+
+    setTimeout(stayOnErrorPage, reconnectTimeoutMs);
+}
+</script>
+
+</body>
+</html>
